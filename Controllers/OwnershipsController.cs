@@ -46,10 +46,14 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Ownerships/Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
-            ViewData["BookId"] = new SelectList(_context.Books, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            var books = await _context.Books.Select(b => new SelectListItem { Text = b.Title, Value = b.Id.ToString() }).ToListAsync();
+            ViewBag.Books = books;
+
+            var users = await _context.Users.Select(u => new SelectListItem { Text = u.UserName, Value = u.Id.ToString() }).ToListAsync();
+            ViewBag.Users = users;
+
             return View();
         }
 
@@ -58,19 +62,26 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,BookId")] Ownership ownership)
+        public async Task<IActionResult> Create(Ownership ownership)
         {
             if (ModelState.IsValid)
             {
-                ownership.Id = Guid.NewGuid();
+                ownership.Id = Guid.NewGuid(); // Genera un nuevo GUID para el Id
                 _context.Add(ownership);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Manejar las excepciones de integridad aquí
+                    ModelState.AddModelError(string.Empty, "Error al guardar el ownership.");
+                }
             }
-            ViewData["BookId"] = new SelectList(_context.Books, "Id", "Id", ownership.BookId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ownership.UserId);
             return View(ownership);
         }
+
 
         // GET: Ownerships/Edit/5
         public async Task<IActionResult> Edit(Guid? id)

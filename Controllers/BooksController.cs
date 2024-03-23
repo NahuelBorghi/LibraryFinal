@@ -149,6 +149,14 @@ namespace LibraryFinal.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Search(string query)
+        {
+            var books = await _context.Books.Where(b => b.Title.Contains(query)).ToListAsync();
+            var options = books.Select(b => new SelectListItem { Text = b.Title, Value = b.Id.ToString() });
+            return Json(options);
+        }
+
         private bool BookExists(Guid id)
         {
             return _context.Books.Any(e => e.Id == id);

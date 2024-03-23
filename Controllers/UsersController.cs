@@ -57,12 +57,21 @@ namespace LibraryFinal.Controllers
         {
             if (ModelState.IsValid)
             {
-                user.Id = Guid.NewGuid();
+                user.Id = Guid.NewGuid(); // Genera un nuevo GUID para el Id
                 _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Manejar las excepciones de integridad aquí
+                    ModelState.AddModelError(string.Empty, "Error al guardar el usuario.");
+                }
             }
             return View(user);
+
         }
 
         // GET: Users/Edit/5
@@ -148,6 +157,15 @@ namespace LibraryFinal.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Search(string query)
+        {
+            var users = await _context.Users.Where(u => u.UserName.Contains(query)).ToListAsync();
+            var options = users.Select(u => new SelectListItem { Text = u.UserName, Value = u.Id.ToString() });
+            return Json(options);
+        }
+
 
         private bool UserExists(Guid id)
         {
