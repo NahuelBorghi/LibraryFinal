@@ -1,8 +1,8 @@
-﻿@model LibraryFinal.Models.Book
-
-@{
-    ViewData["Title"] = "Details";
+﻿@{
+    ViewData["Title"] = "Detalles";
 }
+@model Book
+
 
 <h1>Details</h1>
 
@@ -10,21 +10,21 @@
     <h4>Book</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Author)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Author)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-controller="Books" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index" asp-controller="Books">Back to List</a>
 </div>

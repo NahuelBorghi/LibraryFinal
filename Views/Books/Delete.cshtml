@@ -1,8 +1,8 @@
-﻿@model LibraryFinal.Models.Book
-
-@{
-    ViewData["Title"] = "Delete";
+﻿@{
+    ViewData["Title"] = "Borrar";
 }
+@model Book
+
 
 <h1>Delete</h1>
 
@@ -11,23 +11,23 @@
     <h4>Book</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Author)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Author)
         </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form method="post">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" asp-controller="Books">Back to List</a>
     </form>
 </div>
