@@ -1,7 +1,13 @@
+using LibraryFinal.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<LibraryFinalDbContext>(op => 
+    op.UseSqlServer("name=LibraryFinalConnection"));
 
 var app = builder.Build();
 
