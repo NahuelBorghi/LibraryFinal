@@ -1,7 +1,34 @@
+using LibraryFinal.Controllers;
 using LibraryFinal.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//                      JWT
+//key alfanumerica para crear tokens, no hay que mantenerla aca porque es inseguro
+string key = "c0Ntr4T4M3pOrfAv0RqU1eRotr4bAjaRj4JaJA=";
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication("Bearer").AddJwtBearer(opt =>
+{
+    var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+    var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature);
+
+    opt.RequireHttpsMetadata = false;
+
+    opt.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        IssuerSigningKey = signingKey,
+    };
+
+
+});
+
+builder.Services.AddScoped<AuthController>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -29,5 +56,9 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "auth",
+    pattern: "{action=Login}",
+    defaults: new { controller = "Auth" });
 
 app.Run();

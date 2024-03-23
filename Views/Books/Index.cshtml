@@ -8,7 +8,7 @@
 <p>
     <a href="@Url.Action("Create", "Books")">Create New</a>
 </p>
-<table class="table">
+<table class="table" id="BooksTable">
     <thead>
         <tr>
             <th>
@@ -40,4 +40,38 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem("authToken");
+
+            // Agregar el token a la cabecera de la solicitud
+            $.ajaxSetup({
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            // Obtener la lista de libros usando AJAX
+            $.ajax({
+                url: "/api/books",
+                method: "GET",
+                success: function (data) {
+                    // Mostrar la lista de libros en la tabla
+                    const tableBody = $("#BooksTable tbody");
+                    tableBody.empty();
+
+                    for (const book of data) {
+                        const row = `<tr>
+                                    <td>${book.title}</td>
+                                    <td>${book.author}</td>
+                                </tr>`;
+                        tableBody.append(row);
+                    }
+                }
+            });
+        });
+    </script>
+}
 
