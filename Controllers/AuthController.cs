@@ -32,7 +32,7 @@ namespace LibraryFinal.Controllers
             if (IsValidUser(request.Email, request.Password)) //include IsValidUser check
             {
                 var tokenString = GenerateJwtToken(request.Email, IsAdmin(request.Email)); // Include isAdmin check
-                return Ok(new { token = tokenString });
+                return Ok(new {success = true, token = tokenString});
             }
             return BadRequest("Invalid username or password");
         }
@@ -52,7 +52,7 @@ namespace LibraryFinal.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(60), // Set token expiration (e.g., 60 minutes)
+                Expires = DateTime.UtcNow.AddMonths(1), // Set token expiration (e.g., 60 minutes)
                 SigningCredentials = credentials
             };
 

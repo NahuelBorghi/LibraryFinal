@@ -57,11 +57,12 @@ namespace LibraryFinal.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Id,UserName,Password,Role,Token")] User user)
+        public async Task<IActionResult> Create([Bind("Id,UserName,Password,Role")] User user)
         {
             if (ModelState.IsValid)
             {
                 user.Id = Guid.NewGuid(); // Genera un nuevo GUID para el Id
+                Console.WriteLine(user);
                 _context.Add(user);
                 try
                 {
@@ -101,7 +102,7 @@ namespace LibraryFinal.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,Password,Role,Token")] User user)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,Password,Role")] User user)
         {
             if (id != user.Id)
             {

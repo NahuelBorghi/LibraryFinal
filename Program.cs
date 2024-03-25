@@ -24,8 +24,6 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(opt =>
         ValidateIssuer = false,
         IssuerSigningKey = signingKey,
     };
-
-
 });
 
 builder.Services.AddScoped<AuthController>();
@@ -56,9 +54,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "auth",
-    pattern: "{action=Login}",
-    defaults: new { controller = "Auth" });
 
 app.Run();

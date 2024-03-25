@@ -1,10 +1,4 @@
-﻿@page "/Login"
-
-@{
-    ViewData["Title"] = "Inicio De Sesion";
-}
-
-<form method="post">
+﻿<form method="post" id="LoginRequest">
     <div class="form-group">
         <!-- uso Email por el modelo que recibe la info, pero en realidad se debe ingresar nombre de usuario-->
         <label for="Email">Usuario:</label>
@@ -19,47 +13,87 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $("#LoginForm").validate({
-                rules: {
-                    Password: {
-                        required: true,
-                        minlength: 8
-                    }
-                },
-                messages: {
-                    UserName: {
-                        required: "El nombre de usuario es obligatorio"
-                    },
-                    Password: {
-                        required: "La contraseña es obligatoria",
-                        minlength: "La contraseña debe tener al menos 8 caracteres"
-                    }
+        const form = document.getElementById("LoginRequest");
+
+        // Función para validar el formulario
+        function validateForm() {
+            const password = document.getElementById("Password").value;
+
+            // Validar la contraseña
+            if (!password || password.length < 8) {
+                alert("La contraseña debe tener al menos 8 caracteres");
+                return false;
+            }
+
+            return true;
+        }
+
+        // Agregar evento submit al formulario
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            // Validar el formulario
+            if (!validateForm()) {
+                return;
+            }
+
+            // Obtener los datos del formulario
+            const formData = new FormData(form);
+            const data = {};
+            for (const pair of formData.entries()) {
+                data[pair[0]] = pair[1];
+            }
+
+            // Convertir el objeto a JSON
+            const jsonData = JSON.stringify(data);
+
+            // Enviar la solicitud al servidor
+            const response = await fetch("/login", {
+                method: "POST",
+                body: jsonData,
+                headers: {
+                    "Content-Type": "application/json"
                 }
-            });
-            $("#LoginForm").submit(function (event) {
-                event.preventDefault();
-
-                const formData = new FormData(this);
-
-                fetch("/login", {
-                    method: "POST",
-                    body: formData,
+            });/*
+                .then((response) => {
+                    console.log(response.json());
+                    response.json();
+                    console.log(response);
                 })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            // Guardar el token en el navegador
-                            localStorage.setItem("authToken", data.token);
+                .then((data) => {
+                    console.log(data);
+                    if (data.success) {
+                        // Guardar el token en el navegador
+                        localStorage.setItem("authToken", data.token);
 
-                            // Redirigir al usuario a la página principal
-                            window.location.href = "/";
-                        } else {
-                            // Mostrar un mensaje de error al usuario
-                            alert("Usuario o contraseña incorrectos");
-                        }
-                    });
-            });
+                        // Redirigir al usuario a la página principal
+                        window.location.href = "/";
+                    } else {
+                        // Mostrar un mensaje de error al usuario
+                        alert("Usuario o contraseña incorrectos");
+                    }
+                });
+                
+                //tengo que averiguar por que esto no anda como siempre lo hizo
+                
+                */
+            // Convertir la respuesta a JSON
+            const datita = await response.json();
+
+            // Procesar la respuesta
+            if (datita.success) {
+                // Guardar el token en el navegador
+                console.log(datita.token);
+
+                localStorage.setItem("authToken", datita.token);
+
+                // Redirigir al usuario a la página principal
+                window.location.href = "/";
+            } else {
+                // Mostrar un mensaje de error al usuario
+                alert("Usuario o contraseña incorrectos");
+            }
         });
+
     </script>
 }
