@@ -56,7 +56,7 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create([Bind("Id,UserName,Password,Role")] User user)
         {
             if (ModelState.IsValid)
@@ -101,7 +101,7 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,Password,Role")] User user)
         {
             if (id != user.Id)
@@ -154,7 +154,7 @@ namespace LibraryFinal.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var user = await _context.Users.FindAsync(id);

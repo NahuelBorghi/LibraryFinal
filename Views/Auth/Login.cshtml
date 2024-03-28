@@ -54,45 +54,16 @@
                 headers: {
                     "Content-Type": "application/json"
                 }
-            });/*
+            })
                 .then((response) => {
-                    console.log(response.json());
-                    response.json();
-                    console.log(response);
-                })
-                .then((data) => {
-                    console.log(data);
-                    if (data.success) {
-                        // Guardar el token en el navegador
-                        localStorage.setItem("authToken", data.token);
-
+                    if (response.status == 200) {
                         // Redirigir al usuario a la página principal
                         window.location.href = "/";
                     } else {
                         // Mostrar un mensaje de error al usuario
                         alert("Usuario o contraseña incorrectos");
                     }
-                });
-                
-                //tengo que averiguar por que esto no anda como siempre lo hizo
-                
-                */
-            // Convertir la respuesta a JSON
-            const datita = await response.json();
-
-            // Procesar la respuesta
-            if (datita.success) {
-                // Guardar el token en el navegador
-                console.log(datita.token);
-
-                localStorage.setItem("authToken", datita.token);
-
-                // Redirigir al usuario a la página principal
-                window.location.href = "/";
-            } else {
-                // Mostrar un mensaje de error al usuario
-                alert("Usuario o contraseña incorrectos");
-            }
+                })
         });
 
     </script>

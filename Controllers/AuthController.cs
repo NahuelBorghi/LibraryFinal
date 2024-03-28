@@ -31,14 +31,26 @@ namespace LibraryFinal.Controllers
             // uso request.Email para recibir el userName
             if (IsValidUser(request.Email, request.Password)) //include IsValidUser check
             {
+                var cookieOptions = new CookieOptions
+                {
+                    Path = "/", // Ruta de la cookie
+                    Expires = DateTime.UtcNow.AddDays(30), // Fecha de expiración de la cookie
+                    HttpOnly = true, // Indica que la cookie solo debe ser accesible por el servidor
+                    Secure = true, // Indica que la cookie solo debe ser enviada a través de HTTPS
+                };
                 var tokenString = GenerateJwtToken(request.Email, IsAdmin(request.Email)); // Include isAdmin check
-                return Ok(new {success = true, token = tokenString});
+                Response.Cookies.Append("AuthToken", tokenString, cookieOptions);
+                return Ok();
             }
             return BadRequest("Invalid username or password");
         }
 
         private string GenerateJwtToken(string username, bool isAdmin)
         {
+
+            // **JWT**
+            // **Clave alfanumérica para crear tokens**
+            // **No es recomendable mantenerla aquí por motivos de seguridad**
             string key = "c0Ntr4T4M3pOrfAv0RqU1eRotr4bAjaRj4JaJA=";
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256Signature);
