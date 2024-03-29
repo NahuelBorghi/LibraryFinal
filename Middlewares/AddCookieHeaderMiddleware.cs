@@ -1,6 +1,6 @@
 ﻿namespace LibraryFinal.Middlewares
-{
-    public class AddCookieHeaderMiddleware
+{ 
+    public class AddCookieHeaderMiddleware :IMiddleware
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -9,14 +9,14 @@
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task Invoke(HttpContext context, RequestDelegate next)
+
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var cookie = _httpContextAccessor.HttpContext.Request.Cookies["AuthToken"];
             if (!string.IsNullOrEmpty(cookie))
             {
                 context.Request.Headers.Append("Authorization", $"AuthToken={cookie}");
             }
-
             await next(context);
         }
     }

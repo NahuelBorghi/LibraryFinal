@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryFinal.Controllers
 {
@@ -25,6 +26,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Books/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -43,6 +45,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Books/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +56,7 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create([Bind("Id,Title,Author")] Book book)
         {
             if (ModelState.IsValid)
@@ -66,6 +70,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Books/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -86,6 +91,7 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Title,Author")] Book book)
         {
             if (id != book.Id)
@@ -117,6 +123,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Books/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -137,6 +144,7 @@ namespace LibraryFinal.Controllers
         // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var book = await _context.Books.FindAsync(id);
@@ -150,6 +158,7 @@ namespace LibraryFinal.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Search(string query)
         {
             var books = await _context.Books.Where(b => b.Title.Contains(query)).ToListAsync();

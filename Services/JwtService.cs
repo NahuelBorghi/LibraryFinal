@@ -14,7 +14,7 @@ namespace LibraryFinal.Services
         {
             _secretKey = "c0Ntr4T4M3pOrfAv0RqU1eRotr4bAjaRj4JaJA=";
         }
-        private string GenerateToken(string username, bool isAdmin)
+        public string GenerateToken(string username, bool isAdmin)
         {
 
             

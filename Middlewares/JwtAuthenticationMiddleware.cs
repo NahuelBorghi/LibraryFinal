@@ -1,82 +1,72 @@
 ﻿using LibraryFinal.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-public class JwtAuthenticationMiddleware
+namespace LibraryFinal.Middlewares
 {
-    private readonly RequestDelegate _next;
-    private readonly JwtService _jwtService;
-    private readonly IAuthorizationPolicyProvider _policyProvider;
-
-    public JwtAuthenticationMiddleware(RequestDelegate next, JwtService jwtService, IAuthorizationPolicyProvider policyProvider)
+    public class JwtAuthenticationMiddleware
     {
-        _next = next;
-        _jwtService = jwtService;
-        _policyProvider = policyProvider;
-    }
+        private readonly RequestDelegate _next;
+        private readonly JwtService _jwtService;
+        private readonly IAuthorizationPolicyProvider _policyProvider;
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").LastOrDefault();
-        if (string.IsNullOrEmpty(token))
+        public JwtAuthenticationMiddleware(RequestDelegate next, JwtService jwtService, IAuthorizationPolicyProvider policyProvider)
         {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return;
+            _next = next;
+            _jwtService = jwtService;
+            _policyProvider = policyProvider;
         }
 
-        var claimsPrincipal = _jwtService.ValidateToken(token);
-        if (claimsPrincipal == null)
+        public async Task InvokeAsync(HttpContext context)
         {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return;
-        }
-
-        context.User = claimsPrincipal;
-
-        var role = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
-
-        var policyName = context.GetRouteValue("policyName")?.ToString();
-        if (!string.IsNullOrEmpty(policyName) && !string.IsNullOrEmpty(role))
-        {
-            var policy = await _policyProvider.GetPolicyAsync(policyName);
-            if (policy != null)
+            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split("AuthToken=").LastOrDefault();
+            // Distinguir entre usuarios autenticados y visitantes
+            if (string.IsNullOrEmpty(token))
             {
-                if (policyName == "AdminOnly")
+                // Si no hay token, verificar si es un visitante
+                if (IsGuest(context))
                 {
-                    if (role != "Admin") 
-                    {
-                        context.Items["isAuthorized"] = true;
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        return;
-                    }
+                    // Permitir acceso a secciones públicas
+                    await _next(context);
+                    return;
                 }
-                else if (policyName == "UserOnly")
-                {
-                    if (role != "User")
-                    {
-                        context.Items["isAuthorized"] = true;
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        return;
-                    }
-                }
+
+                // Si no es un visitante, devolver error 401
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return;
             }
+            var claimsPrincipal = _jwtService.ValidateToken(token);
+            if (claimsPrincipal == null)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return;
+            }
+
+            context.User = claimsPrincipal;
+            await _next(context);
         }
-        else
-        {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return;
-        }
-        await _next(context);
+        private bool IsGuest(HttpContext context)
+            {
+                // Obtener la ruta actual
+                var currentPath = context.Request.Path.Value;
+
+                // Ruta raíz
+                var rootPath = "/";
+
+                // Ruta de vista login
+                var loginPath = "/Auth/Login";
+
+                // Ruta de consulta login
+
+                var login = "/login";
+                // Si la ruta actual es la raíz o la de login, es un visitante
+                return currentPath == rootPath || currentPath == loginPath || currentPath == login;
+            }
     }
 }

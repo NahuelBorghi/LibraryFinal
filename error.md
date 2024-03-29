@@ -1,4 +1,4 @@
-﻿log del error al momendo de hacer build del proyecto:
+﻿/*log del error al momendo de hacer build del proyecto:
 
 crit: Microsoft.AspNetCore.Hosting.Diagnostics[6]
       Application startup exception
@@ -30,4 +30,4 @@ Unhandled exception. System.InvalidOperationException: A suitable constructor fo
    at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
    at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
    at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
-   at Program.<Main>$(String[] args) in C:\Users\Bizz\Desktop\aspnetapp\LibraryFinal\Program.cs:line 80
+   at Program.<Main>$(String[] args) in C:\Users\Bizz\Desktop\aspnetapp\LibraryFinal\Program.cs:line 80 */
