@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryFinal.Controllers
 {
@@ -26,6 +27,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Ownerships/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -46,6 +48,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Ownerships/Create
+        [Authorize]
         public async Task<IActionResult> CreateAsync()
         {
             var books = await _context.Books.Select(b => new SelectListItem { Text = b.Title, Value = b.Id.ToString() }).ToListAsync();
@@ -61,7 +64,7 @@ namespace LibraryFinal.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create(Ownership ownership)
         {
             if (ModelState.IsValid)
@@ -84,6 +87,7 @@ namespace LibraryFinal.Controllers
 
 
         // GET: Ownerships/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -106,6 +110,7 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserId,BookId")] Ownership ownership)
         {
             if (id != ownership.Id)
@@ -139,6 +144,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Ownerships/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -161,6 +167,7 @@ namespace LibraryFinal.Controllers
         // POST: Ownerships/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var ownership = await _context.Ownerships.FindAsync(id);

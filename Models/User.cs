@@ -15,7 +15,5 @@ public partial class User
     [Display(Name = "Rol")]
     public string Role { get; set; } = null!;
 
-    public string Token { get; set; } = null!;
-
     public virtual ICollection<Ownership> Ownerships { get; set; } = new List<Ownership>();
 }

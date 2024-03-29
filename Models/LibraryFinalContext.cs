@@ -72,9 +72,6 @@ public partial class LibraryFinalContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("role");
-            entity.Property(e => e.Token)
-                .IsUnicode(false)
-                .HasColumnName("token");
             entity.Property(e => e.UserName)
                 .HasMaxLength(50)
                 .IsUnicode(false)

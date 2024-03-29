@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LibraryFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryFinal.Controllers
 {
@@ -25,6 +26,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Users/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -43,6 +45,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Users/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -53,11 +56,13 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserName,Password,Role,Token")] User user)
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Create([Bind("Id,UserName,Password,Role")] User user)
         {
             if (ModelState.IsValid)
             {
                 user.Id = Guid.NewGuid(); // Genera un nuevo GUID para el Id
+                Console.WriteLine(user);
                 _context.Add(user);
                 try
                 {
@@ -75,6 +80,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Users/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -95,7 +101,8 @@ namespace LibraryFinal.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,Password,Role,Token")] User user)
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,UserName,Password,Role")] User user)
         {
             if (id != user.Id)
             {
@@ -126,6 +133,7 @@ namespace LibraryFinal.Controllers
         }
 
         // GET: Users/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -146,6 +154,7 @@ namespace LibraryFinal.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -159,6 +168,7 @@ namespace LibraryFinal.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Search(string query)
         {
             var users = await _context.Users.Where(u => u.UserName.Contains(query)).ToListAsync();

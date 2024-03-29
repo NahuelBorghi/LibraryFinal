@@ -1,0 +1,70 @@
+﻿<form method="post" id="LoginRequest">
+    <div class="form-group">
+        <!-- uso Email por el modelo que recibe la info, pero en realidad se debe ingresar nombre de usuario-->
+        <label for="Email">Usuario:</label>
+        <input type="text" class="form-control" id="Email" name="Email" placeholder="Ingrese su nombre de usuario">
+    </div>
+    <div class="form-group">
+        <label for="Password">Contraseña:</label>
+        <input type="password" class="form-control" id="Password" name="Password" placeholder="Ingrese su contraseña">
+    </div>
+    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+</form>
+
+@section Scripts {
+    <script>
+        const form = document.getElementById("LoginRequest");
+
+        // Función para validar el formulario
+        function validateForm() {
+            const password = document.getElementById("Password").value;
+
+            // Validar la contraseña
+            if (!password || password.length < 8) {
+                alert("La contraseña debe tener al menos 8 caracteres");
+                return false;
+            }
+
+            return true;
+        }
+
+        // Agregar evento submit al formulario
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            // Validar el formulario
+            if (!validateForm()) {
+                return;
+            }
+
+            // Obtener los datos del formulario
+            const formData = new FormData(form);
+            const data = {};
+            for (const pair of formData.entries()) {
+                data[pair[0]] = pair[1];
+            }
+
+            // Convertir el objeto a JSON
+            const jsonData = JSON.stringify(data);
+
+            // Enviar la solicitud al servidor
+            const response = await fetch("/login", {
+                method: "POST",
+                body: jsonData,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then((response) => {
+                    if (response.status == 200) {
+                        // Redirigir al usuario a la página principal
+                        window.location.href = "/";
+                    } else {
+                        // Mostrar un mensaje de error al usuario
+                        alert("Usuario o contraseña incorrectos");
+                    }
+                })
+        });
+
+    </script>
+}
